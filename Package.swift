@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "AsyncBle",
+    name: "AsyncBluetooth",
     platforms: [.iOS(.v13)],
     products: [
         .library(name: "CoreBluetoothWrapper", targets: ["CoreBluetoothWrapper"]),
