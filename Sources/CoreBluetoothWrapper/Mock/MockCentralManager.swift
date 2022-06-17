@@ -3,21 +3,23 @@
 import Foundation
 import CoreBluetooth
 
-class MockCentralManager: CentralManager {
+public class MockCentralManager: CentralManager {
     
-    var delegate: CentralManagerDelegate?
-    var state: CBManagerState = .poweredOn
-    var isScanning: Bool = false
+    public init() { }
     
-    func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?, options: [String : Any]?) {
+    public var delegate: CentralManagerDelegate?
+    public var state: CBManagerState = .poweredOn
+    public var isScanning: Bool = false
+    
+    public func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?, options: [String : Any]?) {
     }
     
-    func stopScan() {
+    public func stopScan() {
     }
     
-    func connect(_ peripheral: Peripheral, options: [String : Any]?) {
+    public func connect(_ peripheral: Peripheral, options: [String : Any]?) {
     }
     
-    func cancelPeripheralConnection(_ peripheral: Peripheral) {
+    public func cancelPeripheralConnection(_ peripheral: Peripheral) {
     }
 }

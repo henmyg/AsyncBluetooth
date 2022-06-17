@@ -8,6 +8,7 @@ let package = Package(
     platforms: [.iOS(.v13)],
     products: [
         .library(name: "CoreBluetoothWrapper", targets: ["CoreBluetoothWrapper"]),
+        .library(name: "AsyncBle", targets: ["AsyncBle"]),
     ],
     dependencies: [
         .package(url: "https://github.com/henmyg/Utils.git", from: "0.0.0")
@@ -19,5 +20,11 @@ let package = Package(
         .testTarget(
             name: "CoreBluetoothWrapperTests",
             dependencies: ["CoreBluetoothWrapper"]),
+        .target(
+            name: "AsyncBle",
+            dependencies: ["CoreBluetoothWrapper", "Utils"]),
+        .testTarget(
+            name: "AsyncBleTests",
+            dependencies: ["AsyncBle"]),
     ]
 )
