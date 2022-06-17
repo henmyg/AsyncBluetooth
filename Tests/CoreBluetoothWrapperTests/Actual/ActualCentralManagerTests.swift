@@ -32,7 +32,7 @@ class CentralManagerTests: XCTestCase {
         XCTAssertNotNil(manager)
     }
     
-    func test_doesntKeepDelegtaeAlive() {
+    func test_doesntKeepDelegateAlive() {
         var strongDelegate: ExampleDelegate? = ExampleDelegate()
         weak var weakDelegate = strongDelegate
         let _ = ActualCentralManager(delegate: .restoring(delegate: strongDelegate!), queue: nil, options: [:])
@@ -41,5 +41,4 @@ class CentralManagerTests: XCTestCase {
         strongDelegate = nil
         XCTAssertNil(weakDelegate)
     }
-
 }

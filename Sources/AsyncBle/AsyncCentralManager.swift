@@ -6,6 +6,13 @@ import CoreBluetooth
 import CoreBluetoothWrapper
 
 public class AsyncCentralManager {
+    
+    init(_ central: CentralManager) {
+        self.central = central
+    }
+    
+    let central: CentralManager
+    
     let _didUpdateStates = PassthroughSubject<CentralManager, Never>()
     public var didUpdateState: AnyPublisher<CentralManager, Never> { _didUpdateStates.eraseToAnyPublisher() }
     
@@ -79,16 +86,16 @@ extension AsyncCentralManager {
 }
 
 public class SimpleAsyncCentralManager : AsyncCentralManager, SimpleCentralManagerDelegate {
-    public init(_ central: CentralManager = ActualCentralManager(delegate: nil, queue: DispatchQueue(label: "ble"), options: [:])) {
-        super.init()
-        central.delegate = .simple(delegate: self)
+    public override init(_ central: CentralManager = ActualCentralManager(delegate: nil, queue: DispatchQueue(label: "ble"), options: [:])) {
+        super.init(central)
+        central.delegate = .simple(delegate: SimpleDelegateRef(self))
     }
 }
 
 public class RestoringAsyncCentralManager : AsyncCentralManager {
-    public init(_ central: CentralManager = ActualCentralManager(delegate: nil, queue: DispatchQueue(label: "ble"), options: [:])) {
-        super.init()
-        central.delegate = .restoring(delegate: self)
+    public override init(_ central: CentralManager = ActualCentralManager(delegate: nil, queue: DispatchQueue(label: "ble"), options: [:])) {
+        super.init(central)
+        central.delegate = .restoring(delegate: RestoringDelegateRef(self))
     }
     
     private let _willRestoreState = PassthroughSubject<WillRestoreStateValue, Never>()

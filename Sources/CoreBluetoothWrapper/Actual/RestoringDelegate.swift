@@ -7,10 +7,18 @@ public protocol RestoringCentralManagerDelegate: SimpleCentralManagerDelegate {
     func centralManager(_ central: CentralManager, willRestoreState dict: [String : Any])
 }
 
+public struct RestoringDelegateRef {
+    public init(_ delegate: RestoringCentralManagerDelegate) {
+        self.delegate = delegate
+    }
+    
+    public weak var delegate: RestoringCentralManagerDelegate?
+}
+
 class RestoringDelegate: NSObject, CBCentralManagerDelegate {
     weak var centralManager: ActualCentralManager?
     weak var delegate: RestoringCentralManagerDelegate?
-    init(_ centralManager: ActualCentralManager, _ delegate: RestoringCentralManagerDelegate) {
+    init(_ centralManager: ActualCentralManager, _ delegate: RestoringCentralManagerDelegate?) {
         self.centralManager = centralManager
         self.delegate = delegate
     }

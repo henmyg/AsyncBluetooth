@@ -17,9 +17,9 @@ public class SimulatedCentralManager : CentralManager {
             state = .poweredOn
             
             switch delegate {
-            case .basic(delegate: let basic): basic.centralManagerDidUpdateState(self)
-            case .simple(delegate: let simple): simple.centralManagerDidUpdateState(self)
-            case .restoring(delegate: let restoring): restoring.centralManagerDidUpdateState(self)
+            case .basic(delegate: let basic): basic.delegate?.centralManagerDidUpdateState(self)
+            case .simple(delegate: let simple): simple.delegate?.centralManagerDidUpdateState(self)
+            case .restoring(delegate: let restoring): restoring.delegate?.centralManagerDidUpdateState(self)
             default: break
             }
         }
@@ -48,8 +48,8 @@ public class SimulatedCentralManager : CentralManager {
                     }
                     
                     switch delegate {
-                    case .simple(delegate: let simple): simple.centralManager(self, didDiscover: peripheral, advertisementData: [:], rssi: 42)
-                    case .restoring(delegate: let restoring): restoring.centralManager(self, didDiscover: peripheral, advertisementData: [:], rssi: 42)
+                    case .simple(delegate: let simple): simple.delegate?.centralManager(self, didDiscover: peripheral, advertisementData: [:], rssi: 42)
+                    case .restoring(delegate: let restoring): restoring.delegate?.centralManager(self, didDiscover: peripheral, advertisementData: [:], rssi: 42)
                     default: break
                     }
                 }
@@ -76,8 +76,8 @@ public class SimulatedCentralManager : CentralManager {
             peripheral.setState(.connected)
             
             switch delegate {
-            case .simple(delegate: let simple): simple.centralManager(self, didConnect: peripheral)
-            case .restoring(delegate: let restoring): restoring.centralManager(self, didConnect: peripheral)
+            case .simple(delegate: let simple): simple.delegate?.centralManager(self, didConnect: peripheral)
+            case .restoring(delegate: let restoring): restoring.delegate?.centralManager(self, didConnect: peripheral)
             default: break
             }
         }
@@ -95,8 +95,8 @@ public class SimulatedCentralManager : CentralManager {
             peripheral.setState(.disconnected)
             
             switch delegate {
-            case .simple(delegate: let simple): simple.centralManager(self, didDisconnectPeripheral: peripheral, error: nil)
-            case .restoring(delegate: let restoring): restoring.centralManager(self, didDisconnectPeripheral: peripheral, error: nil)
+            case .simple(delegate: let simple): simple.delegate?.centralManager(self, didDisconnectPeripheral: peripheral, error: nil)
+            case .restoring(delegate: let restoring): restoring.delegate?.centralManager(self, didDisconnectPeripheral: peripheral, error: nil)
             default: break
             }
         }

@@ -1,6 +1,7 @@
 // Henrik Top Mygind, 01/06/2022
 
 import CoreBluetooth
+import Utils
 
 public protocol CentralManager: AnyObject {
     var delegate: CentralManagerDelegate? { get set }
@@ -25,7 +26,7 @@ public extension CentralManager {
 }
 
 public enum CentralManagerDelegate {
-    case basic(delegate: BasicCentralManagerDelegate)
-    case simple(delegate: SimpleCentralManagerDelegate)
-    case restoring(delegate: RestoringCentralManagerDelegate)
+    case basic(delegate: BasicDelegateRef)
+    case simple(delegate: SimpleDelegateRef)
+    case restoring(delegate: RestoringDelegateRef)
 }

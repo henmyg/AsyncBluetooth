@@ -10,10 +10,18 @@ public protocol SimpleCentralManagerDelegate: BasicCentralManagerDelegate {
     func centralManager(_ central: CentralManager, didDisconnectPeripheral peripheral: Peripheral, error: Error?)
 }
 
+public struct SimpleDelegateRef {
+    public init(_ delegate: SimpleCentralManagerDelegate) {
+        self.delegate = delegate
+    }
+    
+    public weak var delegate: SimpleCentralManagerDelegate?
+}
+
 class SimpleDelegate: NSObject, CBCentralManagerDelegate {
     weak var centralManager: ActualCentralManager?
     weak var delegate: SimpleCentralManagerDelegate?
-    init(_ centralManager: ActualCentralManager, _ delegate: SimpleCentralManagerDelegate) {
+    init(_ centralManager: ActualCentralManager, _ delegate: SimpleCentralManagerDelegate?) {
         self.centralManager = centralManager
         self.delegate = delegate
     }

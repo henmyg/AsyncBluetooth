@@ -22,11 +22,11 @@ public class ActualCentralManager: NSObject, CentralManager {
         set {
             switch newValue {
             case let .basic(delegate: basic):
-                _delegate = BasicDelegate(self, basic)
+                _delegate = BasicDelegate(self, basic.delegate)
             case let .simple(delegate: simple):
-                _delegate = SimpleDelegate(self, simple)
+                _delegate = SimpleDelegate(self, simple.delegate)
             case let .restoring(delegate: restoring):
-                _delegate = RestoringDelegate(self, restoring)
+                _delegate = RestoringDelegate(self, restoring.delegate)
             default:
                 centralManager.delegate = nil
             }

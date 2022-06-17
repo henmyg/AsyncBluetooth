@@ -2,6 +2,7 @@
 
 import Foundation
 import CoreBluetooth
+import Utils
 
 public class MockCentralManager: CentralManager {
     
