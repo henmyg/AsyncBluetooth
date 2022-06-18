@@ -3,12 +3,6 @@
 import CoreBluetooth
 import SwiftUI
 
-extension Double {
-    var inMili: Double { self * 1_000.0}
-    var inMicro: Double { self * 1_000_000.0}
-    var inNano: Double { self * 1_000_000_000.0}
-}
-
 public class SimulatedCentralManager : CentralManager {
     
     public init() {

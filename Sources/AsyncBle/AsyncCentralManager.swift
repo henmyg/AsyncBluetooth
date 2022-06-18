@@ -6,13 +6,13 @@ import CoreBluetooth
 import CoreBluetoothWrapper
 
 public class AsyncCentralManager {
-    
     init(_ central: CentralManager) {
         self.central = central
     }
     
-    let central: CentralManager
+    public let central: CentralManager
     
+    // MARK: Delegate
     let _didUpdateStates = PassthroughSubject<CentralManager, Never>()
     public var didUpdateState: AnyPublisher<CentralManager, Never> { _didUpdateStates.eraseToAnyPublisher() }
     
@@ -27,6 +27,17 @@ public class AsyncCentralManager {
     
     let _didDisconnect = PassthroughSubject<DidDisconnectValue, Never>()
     public var didDisconnect: AnyPublisher<DidDisconnectValue, Never> { _didDisconnect.eraseToAnyPublisher() }
+    
+    // MARK: CentralManager
+    public var state: CBManagerState { central.state }
+    
+    public var isScanning: Bool { central.isScanning }
+    
+    public func stopScan() { central.stopScan() }
+    
+    public func cancelPeripheralConnection(_ peripheral: Peripheral) {
+        central.cancelPeripheralConnection(peripheral)
+    }
     
     // MARK: ValueTypes
     public struct DidDiscoverValue {

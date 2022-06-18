@@ -38,4 +38,19 @@ class AsyncPeripheralTests: XCTestCase {
             didReadRssi
         ], timeout: 0.3)
     }
+    
+    func test_doesntKeepEachotherAlive() {
+        var strongPeripheral: Peripheral? = MockPeripheral()
+        weak var weakPeripheral = strongPeripheral
+        var strongAsync: AsyncPeripheral? = AsyncPeripheral(strongPeripheral!)
+        weak var weakAsync = strongAsync
+        strongPeripheral = nil
+        
+        XCTAssertNotNil(weakPeripheral) // Kept alive by asyncManager
+        XCTAssertNotNil(weakAsync)
+        
+        strongAsync = nil
+        XCTAssertNil(weakPeripheral) // No longer kept alive
+        XCTAssertNil(weakAsync)
+    }
 }

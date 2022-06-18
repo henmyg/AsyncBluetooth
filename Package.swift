@@ -22,9 +22,9 @@ let package = Package(
             dependencies: ["CoreBluetoothWrapper"]),
         .target(
             name: "AsyncBle",
-            dependencies: ["CoreBluetoothWrapper", "Utils"]),
+            dependencies: ["CoreBluetoothWrapper", "Utils", .product(name: "CombineUtils", package: "Utils")]),
         .testTarget(
             name: "AsyncBleTests",
-            dependencies: ["AsyncBle"]),
+            dependencies: ["AsyncBle", "CoreBluetoothWrapper"]),
     ]
 )

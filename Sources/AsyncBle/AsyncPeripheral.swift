@@ -2,6 +2,7 @@
 
 import Foundation
 import Combine
+import CoreBluetooth
 import CoreBluetoothWrapper
 
 public class AsyncPeripheral {
@@ -10,8 +11,9 @@ public class AsyncPeripheral {
         peripheral.delegate = self
     }
     
-    private let peripheral: Peripheral
+    public let peripheral: Peripheral
     
+    // MARK: Delegate
     private let _didDiscoverServices = PassthroughSubject<DidDiscoverServicesValue, Never>()
     public var didDiscoverServices: AnyPublisher<DidDiscoverServicesValue, Never> { _didDiscoverServices.eraseToAnyPublisher() }
     
@@ -25,6 +27,36 @@ public class AsyncPeripheral {
     
     private let _didReadRssi = PassthroughSubject<DidReadRssiValue, Never>()
     public var didReadRssi: AnyPublisher<DidReadRssiValue, Never> { _didReadRssi.eraseToAnyPublisher() }
+    
+    // MARK: Peripheral
+    public var identifier: UUID { peripheral.identifier }
+    public var name: String? { peripheral.name }
+    public var state: CBPeripheralState { peripheral.state }
+    public var services: [Service]? { peripheral.services }
+    
+    public func discoverServices(_ serviceUUIDs: [CBUUID]?) {
+        peripheral.discoverServices(serviceUUIDs)
+    }
+    
+    public func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?, for service: Service) {
+        peripheral.discoverCharacteristics(characteristicUUIDs, for: service)
+    }
+    
+    public func setNotifyValue(_ value: Bool, for characteristic: Characteristic) {
+        peripheral.setNotifyValue(value, for: characteristic)
+    }
+    
+    public func readValue(for characteristic: Characteristic) {
+        peripheral.readValue(for: characteristic)
+    }
+    
+    public func writeValue(_ data: Data, for characteristic: Characteristic, type: CBCharacteristicWriteType) {
+        peripheral.writeValue(data, for: characteristic, type: type)
+    }
+    
+    public func readRSSI() {
+        peripheral.readRSSI()
+    }
     
     // MARK: ValueTypes
     public struct DidDiscoverServicesValue {

@@ -10,22 +10,28 @@ public class MockPeripheral : Peripheral {
     
     public var name: String?
     
-    public var delegate: PeripheralDelegate?
+    public weak var delegate: PeripheralDelegate?
     
     public var state: CBPeripheralState = .disconnected
     
     public var services: [Service]?
     
+    public var discoverServicesHandler: ((_ serviceUUIDs: [CBUUID]?) -> Void)?
     public func discoverServices(_ serviceUUIDs: [CBUUID]?) {
+        discoverServicesHandler?(serviceUUIDs)
     }
     
+    public var discoverCharacteristicsHandler: ((_ characteristicUUIDs: [CBUUID]?, _ service: Service) -> Void)?
     public func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?, for service: Service) {
+        discoverCharacteristicsHandler?(characteristicUUIDs, service)
     }
     
     public func setNotifyValue(_ value: Bool, for characteristic: Characteristic) {
     }
     
+    public var readValueHandler: ((_ characteristic: Characteristic) -> Void)?
     public func readValue(for characteristic: Characteristic) {
+        readValueHandler?(characteristic)
     }
     
     public func writeValue(_ data: Data, for characteristic: Characteristic, type: CBCharacteristicWriteType) {

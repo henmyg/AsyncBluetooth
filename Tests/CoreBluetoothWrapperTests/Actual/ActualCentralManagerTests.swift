@@ -28,14 +28,14 @@ class CentralManagerTests: XCTestCase {
     }
     
     func test_canBuild() async {
-        let manager = ActualCentralManager(delegate: .restoring(delegate: ExampleDelegate()), queue: nil, options: [:])
+        let manager = ActualCentralManager(delegate: .restoring(delegate: RestoringDelegateRef(ExampleDelegate())), queue: nil, options: [:])
         XCTAssertNotNil(manager)
     }
     
     func test_doesntKeepDelegateAlive() {
         var strongDelegate: ExampleDelegate? = ExampleDelegate()
         weak var weakDelegate = strongDelegate
-        let _ = ActualCentralManager(delegate: .restoring(delegate: strongDelegate!), queue: nil, options: [:])
+        let _ = ActualCentralManager(delegate: .restoring(delegate: RestoringDelegateRef(strongDelegate!)), queue: nil, options: [:])
         XCTAssertNotNil(weakDelegate)
         
         strongDelegate = nil
