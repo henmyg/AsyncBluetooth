@@ -3,9 +3,19 @@
 import CoreBluetooth
 
 public class SimulatedPeripheral: Peripheral {
-    public let identifier: UUID = UUID()
+    public init(
+        identifier: UUID? = nil,
+        name: String? = nil,
+        simulatedServices: [SimulatedService]? = nil
+    ) {
+        self.identifier = identifier ?? self.identifier
+        self.name = name ?? self.name
+        self._simulatedServices = simulatedServices
+    }
     
-    public let name: String? = "Simulated"
+    public private(set) var identifier: UUID = UUID()
+    
+    public private(set) var name: String? = "Simulated"
     
     public weak var delegate: PeripheralDelegate?
     
@@ -20,8 +30,6 @@ public class SimulatedPeripheral: Peripheral {
     final public private(set) var services: [Service]?
     
     final public func discoverServices(_ serviceUUIDs: [CBUUID]?) {
-        // TODO: Handler individual services
-        
         guard state == .connected else {
             print("Can't communicate with non connected peripheral")
             return
@@ -29,7 +37,12 @@ public class SimulatedPeripheral: Peripheral {
         
         Task {
             try? await Task.sleep(nanoseconds: UInt64(0.2.inNano))
-            services = createSimulatedServices()
+            if let serviceUUIDs = serviceUUIDs {
+                let newServices = simulatedServices.filter { serviceUUIDs.contains($0.uuid) }
+                services = ((services ?? []) + newServices).distinct{ $0.uuid }
+            } else {
+                services = simulatedServices
+            }
             delegate?.peripheral(self, didDiscoverServices: nil)
         }
     }
@@ -99,12 +112,36 @@ public class SimulatedPeripheral: Peripheral {
     }
     
     // SIMULATION
+    private var _simulatedServices: [SimulatedService]?
+    public var simulatedServices: [SimulatedService] {
+        guard let _simulatedServices = _simulatedServices else {
+            let services = createSimulatedServices()
+            _simulatedServices = services
+            return services
+        }
+        return _simulatedServices
+        
+    }
     
     public func createSimulatedServices() -> [SimulatedService] {
         return [SimulatedService()]
     }
     
-    func setState(_ state: CBPeripheralState) {
+    public func setState(_ state: CBPeripheralState) {
         self.state = state
+    }
+}
+
+extension Array {
+    func distinct<TKey: Hashable>(using keyExtractor: (Element) -> TKey) -> Array {
+        var uniques = Set<TKey>()
+        return self.filter {
+            let key = keyExtractor($0)
+            if uniques.contains(key) {
+                return false
+            }
+            uniques.insert(key)
+            return true
+        }
     }
 }
