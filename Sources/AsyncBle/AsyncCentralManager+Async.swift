@@ -14,12 +14,12 @@ public extension AsyncCentralManager {
         timeout: DispatchQueue.SchedulerTimeType.Stride = .seconds(5)
     ) async -> Peripheral? {
         
-        async let peripheral = didDiscover
+        async let result = didDiscover
             .first()
             .async(timeout: timeout)
         
         scanForPeripherals(withServices: services, options: options)
-        return await peripheral
+        return await result?.peripheral
     }
     
     func connectAsync(
@@ -33,7 +33,7 @@ public extension AsyncCentralManager {
             .async(timeout: timeout)
         
         connect(peripheral, options: options)
-        return result != nil
+        return await result != nil
     }
     
     func cancelPeripheralConnectionAsync(
