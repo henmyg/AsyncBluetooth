@@ -33,7 +33,15 @@ public class AsyncCentralManager {
     
     public var isScanning: Bool { central.isScanning }
     
+    public func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?, options: [String : Any]?) {
+        central.scanForPeripherals(withServices: serviceUUIDs, options: options)
+    }
+    
     public func stopScan() { central.stopScan() }
+    
+    public func connect(_ peripheral: Peripheral, options: [String : Any]?) {
+        central.connect(peripheral, options: options)
+    }
     
     public func cancelPeripheralConnection(_ peripheral: Peripheral) {
         central.cancelPeripheralConnection(peripheral)
