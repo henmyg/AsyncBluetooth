@@ -9,6 +9,7 @@ let package = Package(
     products: [
         .library(name: "CoreBluetoothWrapper", targets: ["CoreBluetoothWrapper"]),
         .library(name: "AsyncBle", targets: ["AsyncBle"]),
+        .library(name: "BleProperty", targets: ["BleProperty"])
     ],
     dependencies: [
         .package(url: "https://github.com/henmyg/Utils.git", from: "0.0.0")
@@ -26,5 +27,12 @@ let package = Package(
         .testTarget(
             name: "AsyncBleTests",
             dependencies: ["AsyncBle", "CoreBluetoothWrapper"]),
+        .target(
+            name: "BleProperty",
+            dependencies: ["AsyncBle"]),
+        .testTarget(
+            name: "BlePropertyTests",
+            dependencies: ["BleProperty"])
+        
     ]
 )

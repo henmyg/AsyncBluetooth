@@ -26,7 +26,9 @@ public class MockPeripheral : Peripheral {
         discoverCharacteristicsHandler?(characteristicUUIDs, service)
     }
     
+    public var setNotifyHandler: ((Bool, Characteristic) -> Void)?
     public func setNotifyValue(_ value: Bool, for characteristic: Characteristic) {
+        setNotifyHandler?(value, characteristic)
     }
     
     public var readValueHandler: ((_ characteristic: Characteristic) -> Void)?
@@ -34,7 +36,9 @@ public class MockPeripheral : Peripheral {
         readValueHandler?(characteristic)
     }
     
+    public var writeHandler: ((Data, Characteristic, CBCharacteristicWriteType) -> Void)?
     public func writeValue(_ data: Data, for characteristic: Characteristic, type: CBCharacteristicWriteType) {
+        writeHandler?(data, characteristic, type)
     }
     
     public func readRSSI() {
