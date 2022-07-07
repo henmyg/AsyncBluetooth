@@ -5,6 +5,20 @@ import CoreBluetooth
 import CoreBluetoothWrapper
 
 public extension AsyncCentralManager {
+    
+    @discardableResult
+    func stateAsync(predicate: ((CBManagerState) -> Bool)? = nil) async -> CBManagerState {
+        let predicate = predicate ?? { s in s == .poweredOn }
+        if predicate(state) {
+            return state
+        }
+        
+        return await didUpdateState
+            .map { m in m.state }
+            .first(where: { s in predicate(s) })
+            .async()
+    }
+    
     /**
      * Scans for the first peripheral with the given services.
      */

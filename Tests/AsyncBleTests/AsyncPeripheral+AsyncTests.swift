@@ -69,6 +69,35 @@ class AsyncPeripheral_AsyncTests: XCTestCase {
         XCTAssertEqual(actual, expected)
     }
     
+    func testDiscoverServicesAndCharacteristicsAsync() async {
+        let mock = MockPeripheral()
+        let peripheral = AsyncPeripheral(mock)
+        let mockService = MockService()
+        
+        mock.discoverServicesHandler = { (services) in
+            Task {
+                mock.services = [mockService]
+                mock.delegate?.peripheral(mock, didDiscoverServices: nil)
+            }
+        }
+        
+        mock.discoverCharacteristicsHandler = { (characteristics, service) in
+            Task {
+                mockService.characteristics = [MockCharacteristic()]
+                mock.delegate?.peripheral(mock, didDiscoverCharacteristicsFor: service, error: nil)
+            }
+        }
+
+        let services = await peripheral.discoverServicesAndCharacteristicsAsync(nil)
+        let characteristics = services?.flatMap { s in s.characteristics ?? [] }
+        
+        XCTAssertNotNil(services)
+        XCTAssertEqual(services?.map { $0.uuid }, [mockService.uuid])
+        XCTAssertNotNil(characteristics)
+        XCTAssertEqual(characteristics?.map { $0.uuid }, mockService.characteristics?.map { $0.uuid })
+
+    }
+    
     // MARK: ReadValueAsync
     func testReadValueAsync() async {
         let mock = MockPeripheral()

@@ -7,6 +7,7 @@ import CoreBluetoothWrapper
 
 public extension AsyncPeripheral {
     // MARK: Discover
+    @discardableResult
     func discoverServicesAsync(
         _ serviceUUIDs: [CBUUID]?,
         timeout: DispatchQueue.SchedulerTimeType.Stride = .seconds(1)
@@ -18,6 +19,7 @@ public extension AsyncPeripheral {
         return await services as? [Service]
     }
     
+    @discardableResult
     func discoverCharacteristicsAsync(
         _ characteristicUUIDs: [CBUUID]?,
         for service: Service,
@@ -33,21 +35,19 @@ public extension AsyncPeripheral {
         return await characteristics as? [Characteristic]
     }
     
+    @discardableResult
     func discoverServicesAndCharacteristicsAsync(
         _ dict: [CBUUID: [CBUUID]?]?,
         timeout: DispatchQueue.SchedulerTimeType.Stride = .seconds(5)
     ) async -> [Service]? {
-        guard let dict = dict else {
-            
-            return nil
-        }
+        let serviceIds = dict.map { Array($0.keys) }
         
-        let services = await discoverServicesAsync(Array(dict.keys), timeout: timeout) ?? []
+        let services = await discoverServicesAsync(serviceIds, timeout: timeout) ?? []
         
         let resultingServices = await withTaskGroup(of: [Characteristic]?.self)
         { (group: inout TaskGroup<[Characteristic]?>) -> [Service] in
             for service in services {
-                let characteristicUUIDs = dict[service.uuid] as? [CBUUID]
+                let characteristicUUIDs = dict?[service.uuid] as? [CBUUID]
                 group.addTask { [weak self] in
                     return await self?.discoverCharacteristicsAsync(characteristicUUIDs, for: service, timeout: timeout)
                 }
@@ -62,6 +62,7 @@ public extension AsyncPeripheral {
     }
     
     // MARK: Read
+    @discardableResult
     func readValueAsync(
         _ characteristic: Characteristic,
         timeout: DispatchQueue.SchedulerTimeType.Stride = .seconds(1)
