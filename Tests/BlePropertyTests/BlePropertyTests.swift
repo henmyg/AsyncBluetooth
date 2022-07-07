@@ -6,33 +6,17 @@ import CoreBluetoothWrapper
 import BleProperty
 import AsyncBle
 
-extension Int: DataCodable {
-    public init?(_ data: Data?) {
-        guard let value = data?.withUnsafeBytes({ $0.load(as: Int.self) }) else {
-            return nil
-        }
-        
-        self = value
-    }
-    
-    public var data: Data {
-        var int = self
-        return Data(bytes: &int, count: MemoryLayout<Int>.size)
-    }
-}
-
-
 class BlePropertyTests: XCTestCase {
 
     struct ExampleData: DataCodable, Equatable {
-        var value: Int
+        var value: UInt16
         
-        init(_ value: Int) {
+        init(_ value: UInt16) {
             self.value = value
         }
         
         init?(_ data: Data?) {
-            guard let value = Int(data) else {
+            guard let value = UInt16(data) else {
                 return nil
             }
             
@@ -50,7 +34,7 @@ class BlePropertyTests: XCTestCase {
     }
     class SubscribableExample: BleProperty<ExampleData> & SubscribableProperty {}
     
-    func testExample() async {
+    func testCanCreate() async {
         let service = MockService()
         let c1 = MockCharacteristic()
         let c2 = MockCharacteristic()
@@ -70,7 +54,7 @@ class BlePropertyTests: XCTestCase {
         
         _ = await readable.read(timeout: .milliseconds(200))
         writable.write(ExampleData(42))
-        var received = [Int]()
+        var received = [UInt16]()
         _ = subscribable.subscribe()
             .compactMap { $0?.value }
             .sink { value in
@@ -98,7 +82,7 @@ class BlePropertyTests: XCTestCase {
         mock.readValueHandler = { c in
             Task {
                 try? await Task.sleep(nanoseconds: UInt64(0.1.inNano))
-                characteristic.value = Data([27,0,0,0, 0,0,0,0])
+                characteristic.value = Data([27,0])
                 mock.delegate?.peripheral(mock, didUpdateValueFor: c, error: nil)
             }
         }
@@ -125,7 +109,7 @@ class BlePropertyTests: XCTestCase {
         
         let didWrite = expectation(description: "Did write")
         mock.writeHandler = { (d, c, t) in
-            XCTAssertEqual(d, Data([42,0,0,0, 0,0,0,0]))
+            XCTAssertEqual(d, Data([42,0]))
             didWrite.fulfill()
         }
         
@@ -160,13 +144,13 @@ class BlePropertyTests: XCTestCase {
             received.append(data)
         }.store(in: &bag)
         
-        characteristic.value = Data([1,0,0,0, 0,0,0,0])
+        characteristic.value = Data([1,0])
         mock.delegate?.peripheral(mock, didUpdateValueFor: characteristic, error: nil)
         
-        characteristic.value = Data([2,0,0,0, 0,0,0,0])
+        characteristic.value = Data([2,0])
         mock.delegate?.peripheral(mock, didUpdateValueFor: characteristic, error: nil)
         
-        characteristic.value = Data([3,0,0,0, 0,0,0,0])
+        characteristic.value = Data([3,0])
         mock.delegate?.peripheral(mock, didUpdateValueFor: characteristic, error: nil)
         
         wait(for: [didSubscribe], timeout: 0.1)
